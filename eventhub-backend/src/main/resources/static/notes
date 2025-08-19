@@ -1,0 +1,198 @@
+adhavan - Tedmosby@12
+sam - 123456
+
+
+1. 🎟️ RSVP Capacity Management
+Add capacity and attendeeCount fields to Event
+
+Prevent RSVP if full
+
+Show message like “Event is full”
+
+2. 🔎 Search & Filter Events
+Endpoint to search events by title/description
+
+Filter by date/category
+
+3. 📤 CSV Export of RSVPs
+Endpoint for event creator to export attendee list in CSV
+
+🔒 Authentication Improvements
+4. ✉️ Email Confirmation (Optional Phase)
+Send confirmation mail when user signs up or RSVPs
+
+Use Mailtrap or similar in dev
+
+🧑‍💼 Organizer Tools
+5. 📊 Dashboard for Event Stats
+Number of RSVPs per event
+
+Views, conversion rate (if tracked)
+
+📸 Media Uploads
+6. 📸 Event Banner Uploads
+Allow event creators to upload an image
+
+Store in local dir or AWS S3 (if time permits)
+
+Return image URL in event listing
+
+🌍 Map & Location
+7. 🌍 Event Location & Map Support
+Add location fields (city, venue, lat/lng)
+
+Use Google Maps API in frontend (backend: just store & return)
+
+✅ Final Phase: QR Code & Check-in
+8. 🧾 QR Code Check-in
+Generate a QR code per RSVP
+
+Scan at event to mark attendance
+
+Optional Bonuses (only if time permits)
+📱 Make it PWA-ready (mostly frontend)
+
+🔒 Role-based admin access for deleting events
+
+⏰ Reminders for upcoming events via email/scheduler
+
+
+
+1. admin ban users
+
+
+
+
+🎨 eventhub-frontend (React)
+✅ When to move to frontend?
+After:
+
+🔐 Secure login is working
+
+🎟️ RSVP logic is in place
+
+📧 Email confirmation works
+
+📸 Image upload & 🔍 filters are ready
+
+📊 Dashboards or QR exports (if needed) are tested
+
+✅ You're almost there — 80% backend is already solid.
+
+🛠️ Frontend Plan: eventhub-frontend in React
+We’ll structure the frontend like this:
+
+Page	Purpose
+🔐 Login/Register	User authentication
+🏠 Home / Explore	Browse public events
+➕ Create Event	Form to create event
+🎟️ RSVP Event	Event detail + RSVP button
+📂 My Events	List of events I created
+📋 My RSVPs	List of events I joined
+📊 Dashboard	Stats for my events
+👥 RSVPs List	Who joined my event (as creator)
+🗂️ Filters/Search	Category, Date, etc.
+📱 Mobile-first UI	Optional PWA / responsive UI
+
+We’ll use:
+
+React + Axios (for API calls)
+
+React Router (for navigation)
+
+Context API or Redux (for auth session)
+
+Tailwind CSS or Bootstrap for styling
+
+JWT/session cookie handling
+
+
+
+
+
+
+| Priority | Feature                                     | Why It’s Important                              | Build Effort |
+| -------- | ------------------------------------------- | ----------------------------------------------- | ------------ |
+| 1️⃣      | ✉️ **Email Confirmation after RSVP**        | Notifies user instantly, shows professionalism  | Medium       |
+| 2️⃣      | 📸 **Image Uploads (Event Banners)**        | Makes event listings visually appealing         | Medium       |
+| 3️⃣      | 🔍 **Search, Filters, Categories**          | Lets users find events by category, date, etc.  | Medium       |
+| 4️⃣      | 📊 **Admin Dashboard (Stats & Management)** | Platform-level overview for admins              | Medium       |
+| 5️⃣      | 📤 **CSV Export of RSVPs**                  | Useful for event organizers (emails, check-ins) | Easy         |
+| 6️⃣      | 🧾 **QR Code Check-In**                     | Enables in-person verification at events        | Advanced     |
+| 7️⃣      | 🌍 **Map View (Google Maps Integration)**   | Shows event locations on a map                  | Medium       |
+| 8️⃣      | 📱 **Responsive UI / PWA**                  | Works well on mobile, installable as app        | Medium       |
+
+
+
+Here’s the recommended frontend roadmap:
+
+🔐 1. Authentication Pages
+
+✅ Login
+✅ Signup
+🚪 Logout
+🧍 Show logged-in user details
+
+📆 2. Event Pages
+
+🏠 View all events (GET /api/events)
+➕ Create event (POST /api/events/create)
+✏️ Edit event (PUT /api/events/{id}/edit)
+🗑️ Delete event (creator only)
+🎟️ RSVP / Revoke RSVP
+
+🔍 3. Search & Filters
+
+Filter by category/location/date
+Keyword search (title/description)
+
+👤 4. User Profile
+
+Show created events (/api/events/myevents)
+Show RSVP’d events (/api/events/myrsvps)
+Edit profile info
+
+🛠️ 5. Admin Panel
+
+Make user admin
+View dashboard stats
+Delete any event
+
+🖼️ 6. Image Upload
+Use /api/events/upload-banner during event creation/editing
+
+📥 7. CSV Download
+Trigger download of RSVPs for event creators
+
+
+
+
+
+SEARCH EVENTS
+✅ Step 5: Optional (Frontend Side Later)
+
+You can later build dropdowns and date-pickers for:
+Category
+Date range
+Location input
+Search bar for keyword
+
+CALENDAR EVENT
+🖥️ Frontend Calendar (Later):
+
+This response is perfect for:
+FullCalendar.js
+React Big Calendar
+or any other JS calendar plugin.
+You can plot events using the title and date.
+
+MAP VIEW
+You can use:
+
+Google Maps JavaScript API
+Leaflet.js
+Mapbox
+
+…to convert location text to coordinates (using Geocoding API), and then display event markers on the map.
+
+
