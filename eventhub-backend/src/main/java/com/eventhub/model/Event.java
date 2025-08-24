@@ -24,7 +24,7 @@ public class Event {
     private String location;
 
     @Column(nullable = false)
-    //@JsonProperty("dateTime")
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime date;
 

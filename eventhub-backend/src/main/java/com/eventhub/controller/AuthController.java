@@ -98,7 +98,7 @@ public class AuthController {
 
         try {
             User savedUser = userService.updateUserProfile(sessionUser.getId(), updatedUser);
-            // Update session with new data
+            // Update session user with new (updated) data
             session.setAttribute("user", savedUser);
             return ResponseEntity.ok("Profile updated successfully");
         } catch (IllegalArgumentException e) {

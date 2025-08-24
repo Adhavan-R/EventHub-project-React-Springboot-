@@ -76,7 +76,7 @@ public class EventController {
     }
 
 
-    // ✅ Get only events created by the logged-in user
+    //  Get only events created by the logged-in user
     @GetMapping("/myevents")
     public ResponseEntity<?> getMyEvents(HttpSession session) {
         User creator = (User) session.getAttribute("user");
@@ -131,6 +131,7 @@ public class EventController {
     }
 
 
+    // gets the users who are rsvped to their event
     @GetMapping("/rsvps/{eventId}")
     public ResponseEntity<?> getEventRSVPs(@PathVariable Long eventId, HttpSession session) {
         User creator = (User) session.getAttribute("user");
@@ -272,7 +273,7 @@ public class EventController {
     @PostMapping("/upload-banner")
     public ResponseEntity<String> uploadBanner(@RequestParam("file") MultipartFile file) {
         try {
-            String uploadDir = "uploads/";  // Ensure this folder exists or create it
+            String uploadDir = "uploads/";
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path filePath = Paths.get(uploadDir + fileName);
             Files.createDirectories(filePath.getParent());

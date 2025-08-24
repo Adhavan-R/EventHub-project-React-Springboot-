@@ -2,7 +2,6 @@ package com.eventhub.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,14 +29,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-
     @JsonIgnore
     private Set<Event> joinedEvents = new HashSet<>();
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Event> createdEvents = new HashSet<>();
-
 
     public User() {}
 
