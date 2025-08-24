@@ -2,17 +2,17 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080/api/events";
 
-// ✅ RSVP to an event
+//  RSVP to an event
 const rsvpToEvent = (eventId) =>
   axios.post(`${BASE_URL}/rsvp/${eventId}`, {}, { withCredentials: true });
 
-// ✅ Un-RSVP from an event
+//  Un-RSVP from an event
 const unrsvpFromEvent = (eventId) =>
   axios.delete(`${BASE_URL}/unrsvp/${eventId}`, { withCredentials: true });
 
 export const getMyRSVPsAPI = async () => {
   const res = await axios.get("http://localhost:8080/api/events/myrsvps", {
-    withCredentials: true,  // 🔥 this is crucial for session-based auth
+    withCredentials: true,  // for session-based auth
   });
   return res.data;
 };

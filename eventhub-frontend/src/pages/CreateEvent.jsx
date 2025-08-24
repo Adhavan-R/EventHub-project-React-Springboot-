@@ -27,7 +27,7 @@ const CreateEvent = () => {
     try {
       await eventService.createEvent(eventData);
       toast.success("Event created successfully!");
-      navigate("/"); // redirect to homepage or event list
+      navigate("/"); // redirect to homepage
     } catch (error) {
       toast.error(
         error.response?.data || "Failed to create event. Try again."

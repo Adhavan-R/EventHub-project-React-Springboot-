@@ -50,7 +50,7 @@ const EditEvent = () => {
     // Clone event to avoid modifying state directly
     const eventToUpdate = { ...event };
 
-    // Ensure date string has no seconds: keep only 'yyyy-MM-ddTHH:mm'
+    // Date string has no seconds: keep only 'yyyy-MM-ddTHH:mm'
     if (eventToUpdate.date) {
       // Trim seconds and beyond (if included)
       eventToUpdate.date = eventToUpdate.date.slice(0, 16);

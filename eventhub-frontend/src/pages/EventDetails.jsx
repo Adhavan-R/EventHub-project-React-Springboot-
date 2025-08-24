@@ -128,7 +128,7 @@ const EventDetails = () => {
   };
 
   const handleUploadBanner = async () => {
-    const file = fileInputRef.current.files[0]; // ✅ Get the selected file
+    const file = fileInputRef.current.files[0]; //  Get the selected file
     if (!file) {
       toast.error("Please select an image first.");
       return;
@@ -152,7 +152,7 @@ const EventDetails = () => {
       event.title,
       event.description,
       event.location,
-      event.date// this should be ISO format like "2024-02-10T18:00:00"
+      event.date  // ISO format  "2024-02-10T18:00:00"
       
     );
     window.open(calendarUrl, '_blank');

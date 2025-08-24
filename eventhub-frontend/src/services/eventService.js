@@ -24,7 +24,7 @@ const uploadBanner = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
     withCredentials: true,
   });
-  return res.data; // This should be the image URL
+  return res.data; // image URL
 };
 
 const updateBanner = async (eventId, bannerUrl) => {

@@ -3,23 +3,23 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080/api/auth";
 
-// 🔐 Login
+//  Login
 const login = (email, password) =>
   axios.post(`${BASE_URL}/login`, { email, password }, { withCredentials: true });
 
-// // ✅ Register
+// //  Register
 // const register = (name, email, password) =>
 //   axios.post(`${BASE_URL}/register`, { name, email, password }, { withCredentials: true });
 
-// // 👤 Get current user (if needed for session check)
+// //  Get current user (if needed for session check)
 //  const getCurrentUser = () =>
 //    axios.get(`${BASE_URL}/me`, { withCredentials: true }); 
 
-// ✏️ Update user profile
+//  Update user profile
 const updateProfile = (updatedData) =>
   axios.put(`${BASE_URL}/profile`, updatedData, { withCredentials: true });
 
-// 🚪 Logout
+//  Logout
 const logout = () =>
   axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
 
@@ -38,7 +38,6 @@ export const getCurrentUser = async () => {
   });
   return res.data;
 };
-
 
 
 

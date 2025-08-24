@@ -19,10 +19,10 @@ const Register = () => {
 
     try {
       await registerUser(formData);
-      //alert('Registration successful!');
-      navigate('/login'); 
+      
+      navigate('/login');  // redirect to login
       toast.success('Registration successful!');
-      // redirect to login
+      
     } catch (err) {
       setError(err);
       toast.error('Registration failed. Please try again.');
