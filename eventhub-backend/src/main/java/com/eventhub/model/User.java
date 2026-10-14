@@ -23,6 +23,7 @@ public class User {
 
     private String role = "USER";// default
 
+
     @ManyToMany
     @JoinTable(
             name = "event_rsvps",
@@ -32,9 +33,19 @@ public class User {
     @JsonIgnore
     private Set<Event> joinedEvents = new HashSet<>();
 
+
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Event> createdEvents = new HashSet<>();
+
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private Set<UserCategoryScore> categoryScores = new HashSet<>();
 
     public User() {}
 

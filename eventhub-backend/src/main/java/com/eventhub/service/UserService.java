@@ -1,15 +1,27 @@
 package com.eventhub.service;
 
+import com.eventhub.model.Category;
 import com.eventhub.model.Event;
 import com.eventhub.model.User;
+import com.eventhub.model.UserCategoryScore;
 import com.eventhub.repository.EventRepository;
+import com.eventhub.repository.UserCategoryScoreRepository;
 import com.eventhub.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
+
+import com.eventhub.model.PasswordResetToken;
+import com.eventhub.repository.PasswordResetTokenRepository;
+
+import java.security.SecureRandom;
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
@@ -20,16 +32,40 @@ public class UserService {
     @Autowired private EventRepository eventRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    @Autowired private UserCategoryScoreRepository userCategoryScoreRepository;
+    @Autowired private CategoryService categoryService;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
     public User register(User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        //sending welcome email for registered users
+        String subject = "Welcome to EventHub – Registration Successful!";
+
+        String body = "Hi " + user.getName() + ",\n\n"
+                + "Welcome to EventHub! 🎉\n\n"
+                + "Your account has been successfully registered.\n\n"
+                + "With EventHub, you can:\n"
+                + "- Create and manage your own events\n"
+                + "- Discover and join events created by others\n"
+                + "We're excited to have you on board!\n\n"
+                + "Start exploring EventHub and find your next event.\n\n"
+                + "Best regards,\n"
+                + "EventHub Team";
+
+        emailService.sendEmail(user.getEmail(), subject, body);
+
         return userRepository.save(user);
     }
 
     public User login(String email, String password) {
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -126,6 +162,141 @@ public class UserService {
         userRepository.save(user);
 
         return "Admin demoted to user";
+    }
+
+    public void saveUserInterests(
+            User user,
+            List<Long> categoryIds) {
+
+        for (Long categoryId : categoryIds) {
+
+            Category category =
+                    categoryService.getCategoryById(categoryId);
+
+            if (!userCategoryScoreRepository
+                    .existsByUserAndCategory(user, category)) {
+
+                UserCategoryScore score =
+                        new UserCategoryScore();
+
+                score.setUser(user);
+                score.setCategory(category);
+                score.setScore(10);
+
+                userCategoryScoreRepository.save(score);
+            }
+        }
+    }
+
+    public void forgotPassword(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        SecureRandom random = new SecureRandom();
+
+        String otp = String.format(
+                "%06d",
+                random.nextInt(1000000)
+        );
+
+        PasswordResetToken resetToken =
+                passwordResetTokenRepository.findByEmail(email)
+                        .orElse(new PasswordResetToken());
+
+        // Start a completely new reset flow
+        resetToken.setEmail(email);
+        resetToken.setOtp(otp);
+        resetToken.setOtpExpiry(
+                LocalDateTime.now().plusMinutes(5)
+        );
+
+        // Invalidate previous reset-token
+        resetToken.setResetToken(null);
+        resetToken.setResetTokenExpiry(null);
+        resetToken.setVerified(false);
+
+        passwordResetTokenRepository.save(resetToken);
+
+        String subject = "EventHub Password Reset OTP";
+
+        String body =
+                "Your EventHub password reset OTP is: "
+                        + otp
+                        + "\n\nThis OTP is valid for 5 minutes.";
+
+        emailService.sendEmail(email, subject, body);
+    }
+
+
+
+    public String verifyOtp(String email, String otp) {
+
+        PasswordResetToken resetToken =
+                passwordResetTokenRepository.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException("OTP request not found"));
+
+        // Check OTP expiry
+        if (resetToken.getOtpExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP has expired");
+        }
+
+        // Check OTP
+        if (!resetToken.getOtp().equals(otp)) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        // Generate temporary reset token
+        String token = UUID.randomUUID().toString();
+
+        resetToken.setResetToken(token);
+        resetToken.setResetTokenExpiry(
+                LocalDateTime.now().plusMinutes(10)
+        );
+
+        resetToken.setVerified(true);
+
+        passwordResetTokenRepository.save(resetToken);
+
+        return token;
+    }
+
+    public void resetPassword(String resetToken, String newPassword) {
+
+        PasswordResetToken passwordResetToken =
+                passwordResetTokenRepository.findByResetToken(resetToken)
+                        .orElseThrow(() ->
+                                new RuntimeException("Invalid reset token"));
+
+        // Make sure OTP was successfully verified
+        if (!passwordResetToken.isVerified()) {
+            throw new RuntimeException("OTP verification required");
+        }
+
+        // Check reset token expiry
+        if (passwordResetToken.getResetTokenExpiry()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException("Reset token has expired");
+        }
+
+        // Find the user
+        User user = userRepository.findByEmail(
+                passwordResetToken.getEmail()
+        ).orElseThrow(() ->
+                new RuntimeException("User not found"));
+
+        // Hash the new password
+        String hashedPassword =
+                passwordEncoder.encode(newPassword);
+
+        user.setPassword(hashedPassword);
+
+        userRepository.save(user);
+
+        // Reset token should be single-use
+        passwordResetTokenRepository.delete(passwordResetToken);
     }
 
 }

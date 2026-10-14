@@ -1,70 +1,123 @@
 // Navbar.jsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import authService from "../services/authService";
+import { toast } from "react-toastify";
 
 export default function Navbar() {
-  const { user } = useAuth();
+
+  const { user, reloadUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+
+    try {
+
+      await authService.logout();
+
+      await reloadUser();
+
+      toast.success("Logged out successfully");
+
+      navigate("/login");
+
+    } catch (err) {
+
+      console.error(err);
+
+      toast.error("Logout failed");
+    }
+  };
 
   return (
-   <nav className="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50 border-b border-gray-200">
-  <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-    <Link
-      to="/"
-      className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent select-none"
-    >
-      EventHub
-    </Link>
-    <div className="flex items-center space-x-6 text-gray-700 font-medium">
-      <Link
-        to="/"
-        className="hover:text-purple-600 transition-colors duration-300"
-      >
-        Home
-      </Link>
-      <Link
-        to="/create-event"
-        className="hover:text-purple-600 transition-colors duration-300"
-      >
-        Create Event
-      </Link>
-      <Link
-        to="/my-events"
-        className="hover:text-purple-600 transition-colors duration-300"
-      >
-        My Events
-      </Link>
-      <Link
-        to="/myrsvps"
-        className="hover:underline hover:text-purple-600 transition-colors duration-300"
-      >
-        My RSVPs
-      </Link>
+    <nav className="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-50 border-b border-gray-200">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
 
-      {user?.role === "ADMIN" && (
         <Link
-          to="/admin"
-          className="text-red-600 font-semibold hover:text-red-700 transition-colors duration-300"
+          to="/"
+          className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent select-none"
         >
-          Admin Panel
+          EventHub
         </Link>
-      )}
 
-      <Link
-        to="/profile"
-        className="hover:underline hover:text-purple-600 transition-colors duration-300"
-      >
-        Profile
-      </Link>
-      <Link
-        to="/login"
-        className="text-purple-600 border border-purple-600 px-4 py-1.5 rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300 select-none"
-      >
-        Login
-      </Link>
-    </div>
-  </div>
-</nav>
+        <div className="flex items-center space-x-6 text-gray-700 font-medium">
 
+          <Link
+            to="/"
+            className="hover:text-purple-600 transition-colors duration-300"
+          >
+            Home
+          </Link>
+
+          {user && (
+            <>
+              <Link
+                to="/create-event"
+                className="hover:text-purple-600 transition-colors duration-300"
+              >
+                Create Event
+              </Link>
+
+              <Link
+                to="/my-events"
+                className="hover:text-purple-600 transition-colors duration-300"
+              >
+                My Events
+              </Link>
+
+              <Link
+                to="/myrsvps"
+                className="hover:text-purple-600 transition-colors duration-300"
+              >
+                My RSVPs
+              </Link>
+
+              <Link
+                to="/profile"
+                className="hover:text-purple-600 transition-colors duration-300"
+              >
+                Profile
+              </Link>
+            </>
+          )}
+
+          {user?.role === "ADMIN" && (
+            <Link
+              to="/admin"
+              className="text-red-600 font-semibold hover:text-red-700 transition-colors duration-300"
+            >
+              Admin Panel
+            </Link>
+          )}
+
+          {!user ? (
+            <>
+              <Link
+                to="/login"
+                className="text-purple-600 border border-purple-600 px-4 py-1.5 rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/register"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1.5 rounded-xl hover:opacity-90 transition-all duration-300"
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="text-red-600 border border-red-600 px-4 py-1.5 rounded-xl hover:bg-red-600 hover:text-white transition-all duration-300"
+            >
+              Logout
+            </button>
+          )}
+        </div>
+
+      </div>
+    </nav>
   );
 }

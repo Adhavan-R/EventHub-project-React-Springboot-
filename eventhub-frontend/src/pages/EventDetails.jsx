@@ -240,7 +240,10 @@ const EventDetails = () => {
 
 
   <div className="mt-8 flex flex-wrap gap-4">
-    {hasRSVPed ? (
+   
+    {
+    !isCreator ? (
+    hasRSVPed ? (
       <button
         className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl shadow-md transition transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-400"
         onClick={handleUnRSVP}
@@ -254,7 +257,9 @@ const EventDetails = () => {
       >
         RSVP Now
       </button>
-    )}
+    )
+  ):(null)
+    }
 
     {hasRSVPed && (
       <button

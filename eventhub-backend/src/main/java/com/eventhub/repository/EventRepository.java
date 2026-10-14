@@ -1,5 +1,6 @@
 package com.eventhub.repository;
 
+import com.eventhub.exception.EventNotFoundException;
 import com.eventhub.model.Event;
 import com.eventhub.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e WHERE " +
             "(:keyword IS NULL OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(e.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
-            "(:category IS NULL OR LOWER(e.category) = LOWER(:category)) AND " +
+            "(:category IS NULL OR LOWER(e.category) LIKE LOWER(CONCAT('%', :category, '%'))) AND " +
             "(:location IS NULL OR LOWER(e.location) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
             "(:startDate IS NULL OR e.date >= :startDate) AND " +
             "(:endDate IS NULL OR e.date <= :endDate)")
@@ -35,6 +36,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e.id, e.title, SIZE(e.attendees) as rsvpCount FROM Event e ORDER BY SIZE(e.attendees) DESC LIMIT 5")
     List<Object[]> findTop5EventsByRSVPs();
+
+    default Event getEventOrThrow(Long id) {
+
+        return findById(id)
+                .orElseThrow(() ->
+                        new EventNotFoundException(id));
+    }
 
 
 }

@@ -1,8 +1,8 @@
-// src/services/searchService.js
 import axios from 'axios';
+import BASE_URL from './base_api';
 
 const API = axios.create({
-  baseURL: 'http://localhost:8080/api/events',
+  baseURL: `${BASE_URL}/api/events`,
   withCredentials: true,
 });
 

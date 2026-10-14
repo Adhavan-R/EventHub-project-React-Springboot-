@@ -24,7 +24,6 @@ public class Event {
     private String location;
 
     @Column(nullable = false)
-
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime date;
 
@@ -48,6 +47,40 @@ public class Event {
     @Transient
     private int remainingSlots;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Category categoryRef;
+
+    @Version
+    private Long version;
+
+    @Column(nullable = false)
+    private Integer reservedSeats = 0;
+
+    public Integer getReservedSeats() {
+        return reservedSeats;
+    }
+
+    public void setReservedSeats(Integer reservedSeats) {
+        this.reservedSeats = reservedSeats;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Category getCategoryRef() {
+        return categoryRef;
+    }
+
+    public void setCategoryRef(Category categoryRef) {
+        this.categoryRef = categoryRef;
+    }
 
     public Event() {}
 
@@ -83,7 +116,7 @@ public class Event {
     }
 
     public boolean isFull() {
-        return attendees != null && attendees.size() >= capacity;
+        return reservedSeats >= capacity;
     }
 
     public String getCategory() {
@@ -102,5 +135,11 @@ public class Event {
         this.bannerUrl = bannerUrl;
     }
 
+    public int getRemainingSlots() {
+        return remainingSlots;
+    }
 
+    public void setRemainingSlots(int remainingSlots) {
+        this.remainingSlots = remainingSlots;
+    }
 }

@@ -1,36 +1,58 @@
 import axios from "axios";
+import BASE_URL from "./base_api";
 
-const BASE_URL = "http://localhost:8080/api/events";
+const API_URL = `${BASE_URL}/api/events`;
 
-const getAllEvents = () => axios.get(`${BASE_URL}`);
+const getAllEvents = () =>
+  axios.get(API_URL, {
+    withCredentials: true,
+  });
 
-const getEventById = (id) => axios.get(`${BASE_URL}/${id}`);
+const getEventById = (id) =>
+  axios.get(`${API_URL}/${id}`, {
+    withCredentials: true,
+  });
 
-const createEvent = (eventData) => axios.post(`${BASE_URL}/create`, eventData, { withCredentials: true });
+const createEvent = (eventData) =>
+  axios.post(`${API_URL}/create`, eventData, {
+    withCredentials: true,
+  });
 
-const updateEvent = (eventId, updatedData) => axios.put(`${BASE_URL}/${eventId}/edit`, updatedData, { withCredentials: true });
+const updateEvent = (eventId, updatedData) =>
+  axios.put(`${API_URL}/${eventId}/edit`, updatedData, {
+    withCredentials: true,
+  });
 
-const deleteEvent = (eventId) => axios.delete(`${BASE_URL}/${eventId}/delete`, {withCredentials: true,});
+const deleteEvent = (eventId) =>
+  axios.delete(`${API_URL}/${eventId}/delete`, {
+    withCredentials: true,
+  });
 
 const getMyEvents = async () => {
-  const res = await axios.get("http://localhost:8080/api/events/myevents", { withCredentials: true });
+  const res = await axios.get(`${API_URL}/myevents`, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
 const uploadBanner = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
-  const res = await axios.post("http://localhost:8080/api/events/upload-banner", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-    withCredentials: true,
-  });
-  return res.data; // image URL
+
+  const res = await axios.post(
+    `${API_URL}/upload-banner`,
+    formData,
+    {
+      withCredentials: true,
+    }
+  );
+
+  return res.data;
 };
 
 const updateBanner = async (eventId, bannerUrl) => {
-
-   const res = await axios.put(
-    `http://localhost:8080/api/events/${eventId}/banner`,
+  const res = await axios.put(
+    `${API_URL}/${eventId}/banner`,
     { bannerUrl },
     { withCredentials: true }
   );
@@ -38,26 +60,22 @@ const updateBanner = async (eventId, bannerUrl) => {
 };
 
 export const exportRSVPsCSV = async (eventId) => {
-    
-  const response = await fetch(`http://localhost:8080/api/events/${eventId}/export-rsvps`, {
-    method: 'GET',
-    credentials: 'include',
-  });
+  const response = await fetch(
+    `${API_URL}/${eventId}/export-rsvps`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
-    throw new Error('Failed to export CSV');
+    throw new Error("Failed to export CSV");
   }
 
-  const blob = await response.blob();
-  return blob;
+  return response.blob();
 };
 
-
-
-
-
 const eventService = {
-
   getAllEvents,
   getEventById,
   createEvent,
@@ -65,7 +83,7 @@ const eventService = {
   deleteEvent,
   getMyEvents,
   uploadBanner,
-  updateBanner
+  updateBanner,
 };
 
 export default eventService;

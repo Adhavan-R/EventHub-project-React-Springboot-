@@ -1,46 +1,18 @@
-✅ Core Features Completed
-
-👥 User Features:
-Session-based authentication (register, login)
-View all events
-RSVP to events
-View joined events
-Revoke RSVP
-Edit user profile
-
-🛠️ Creator Features:
-Create event
-Edit event
-Delete event
-RSVP capacity limit (with full status)
-View - RSVPed users
-Upload event banner
-Export RSVPs to CSV ✅
-Add event in Google calendar
-
-🛡️ Admin Features:
-Make users Admin, revoke admin access
-Delete any event
-View dashboard stats (no of rsvps, top 5 events rsvped, total users)
-
- 🔎 Search & Filter Events
-Can search using any fields of event
-
-✉️ Email Features:
-RSVP confirmation email
-Event cancellation email
-
-
-
-
-
-
-
 
 🧪 Optional Extras (Nice to Have)
 Profile pictures for users
 Social sharing of events
 Notification system (email or toast alerts)
 User activity log
+
+
+- rsvp modal for confirmation
+
+My Checks :
+Suggestion Algo
+Optimistic lock
+DTO validations
+Global and Custom Exception
+Async Mail Processing - Multithreading
 
 

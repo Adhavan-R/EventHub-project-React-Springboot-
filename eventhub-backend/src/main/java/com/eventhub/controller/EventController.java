@@ -1,9 +1,6 @@
 package com.eventhub.controller;
 
-import com.eventhub.dto.CalendarEventDTO;
-import com.eventhub.dto.EventDTO;
-import com.eventhub.dto.MapEventDTO;
-import com.eventhub.dto.UserDTO;
+import com.eventhub.dto.*;
 import com.eventhub.model.Event;
 import com.eventhub.model.User;
 import com.eventhub.repository.EventRepository;
@@ -12,6 +9,7 @@ import com.eventhub.service.EventService;
 import com.eventhub.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -42,37 +40,81 @@ public class EventController {
     @Autowired
     private UserService userService;
 
+//    // ✅ Create a new event
+//    @PostMapping("/create")
+//    public ResponseEntity<?> createEvent(@RequestBody Event event, HttpSession session) {
+//
+//        User creator = (User) session.getAttribute("user");
+//        if (creator == null) {
+//            return ResponseEntity.status(401).body("Unauthorized");
+//        }
+//
+//        Event event1=event;
+//        Event saved = eventService.createEvent(event1, creator);
+//        return ResponseEntity.ok(new EventDTO(saved));
+//    }
+
     // ✅ Create a new event
     @PostMapping("/create")
-    public ResponseEntity<?> createEvent(@RequestBody Event event, HttpSession session) {
+    public ResponseEntity<?> createEvent(@Valid @RequestBody CreateEventRequest request, HttpSession session) {
 
         User creator = (User) session.getAttribute("user");
         if (creator == null) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        Event event1=event;
-        Event saved = eventService.createEvent(event1, creator);
+//        Event event1=event;
+        Event saved = eventService.createEvent(request, creator);
         return ResponseEntity.ok(new EventDTO(saved));
     }
 
     // ✅ Get all public events
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        List<Event> events = eventService.getAllEvents();
+    public ResponseEntity<List<EventDTO>> getAllEvents(HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        System.out.println("SESSION ID = " + session.getId());
+        System.out.println("SESSION USER = " + user);
+
+        List<Event> events;
+
+        if (user != null) {
+            System.out.println(">>> RECOMMENDATION LOGIC");
+            events = eventService.getRecommendedEvents(user);
+        } else {
+            System.out.println(">>> DEFAULT EVENT LIST");
+            events = eventService.getAllEvents();
+        }
+
         List<EventDTO> eventDTOs = events.stream()
                 .map(EventDTO::new)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(eventDTOs);
     }
 
+//    @GetMapping("/{id}")
+//    public ResponseEntity<EventDTO> getEventById(@PathVariable Long id) {
+//
+//        long eventId=id;
+//
+//        Event event = eventService.getEventById(id);
+//        return  ResponseEntity.ok(new EventDTO(event));
+//    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventDTO> getEventById(
+            @PathVariable Long id,
+            HttpSession session) {
 
-        long eventId=id;
+        User user = (User) session.getAttribute("user");
 
-        Event event = eventService.getEventById(id);
-        return  ResponseEntity.ok(new EventDTO(event));
+        Event event = (user != null)
+                ? eventService.getEventDetails(id, user)
+                : eventService.getEventById(id);
+
+        return ResponseEntity.ok(new EventDTO(event));
     }
 
 
@@ -259,14 +301,37 @@ public class EventController {
 
     @GetMapping("/search")
     public ResponseEntity<List<EventDTO>> searchEvents(
+
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime startDate,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime endDate,
+
+            HttpSession session
     ) {
-        List<Event> events = eventService.searchEvents(keyword, category, location, startDate, endDate);
-        List<EventDTO> eventDTOs = events.stream().map(EventDTO::new).toList();
+
+        User user = (User) session.getAttribute("user");
+
+        List<Event> events = eventService.searchEvents(
+                keyword,
+                category,
+                location,
+                startDate,
+                endDate,
+                user);
+
+        List<EventDTO> eventDTOs =
+                events.stream()
+                        .map(EventDTO::new)
+                        .toList();
+
         return ResponseEntity.ok(eventDTOs);
     }
 
@@ -356,5 +421,25 @@ public class EventController {
 
         return ResponseEntity.ok(mapEvents);
     }
+
+
+    @GetMapping("/migrate-reserved-seats")
+    public String migrateReservedSeats() {
+
+        eventService.migrateReservedSeats();
+
+        return "Migration completed";
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 }

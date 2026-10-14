@@ -37,12 +37,30 @@ const Login = () => {
     }
 
       try {
+
         setLoading(true);
-        await authService.login(email, password);
+
+       await authService.login(email, password);
 
         await reloadUser();
-        navigate("/"); 
-        toast.success("Login successful!");
+
+        const interests =
+          await authService.getMyInterests();
+
+        if (interests.data === 0) {
+
+          toast.success("Choose your interests!");
+
+          navigate("/interests");
+
+        } else {
+
+          toast.success("Login successful!");
+
+          navigate("/");
+        }
+       
+        
 
       // Optional: Save session info if backend returns it
       // localStorage.setItem("user", JSON.stringify(res.data));
@@ -102,6 +120,18 @@ const Login = () => {
           placeholder="Enter your password"
           autoComplete="current-password"
         />
+        <div className="text-right -mt-5 mb-6">
+          
+      </div>
+      <div className="text-right -mt-5 mb-6">
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="text-sm text-purple-600 hover:text-pink-600 font-semibold hover:underline"
+          >
+            Forgot Password?
+          </button>
+      </div>
       </div>
 
       <button

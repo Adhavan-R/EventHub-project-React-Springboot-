@@ -12,8 +12,15 @@ import MyRSVPs from "./pages/MyRSVPs";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOtp from "./pages/VerifyOtp";
+import ResetPassword from "./pages/ResetPassword";
+
+import InterestSelection from "./pages/InterestSelection";
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (
@@ -32,6 +39,10 @@ function App() {
             <Route path="/my-events" element={<MyEvents />} />
             <Route path="/myrsvps" element={<MyRSVPs />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/interests" element={<InterestSelection />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/reset-password"element={<ResetPassword />} />
           </Routes>
           
         </main>

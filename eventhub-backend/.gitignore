@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Uploaded files
+uploads/
+
+# Backup archives
+*.zip
+
+# Logs
+*.log

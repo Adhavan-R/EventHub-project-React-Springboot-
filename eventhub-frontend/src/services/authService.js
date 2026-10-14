@@ -1,55 +1,111 @@
-// src/services/authService.js
 import axios from "axios";
+import BASE_URL from "./base_api";
 
-const BASE_URL = "http://localhost:8080/api/auth";
+const AUTH_URL = `${BASE_URL}/api/auth`;
 
-//  Login
+// Login
 const login = (email, password) =>
-  axios.post(`${BASE_URL}/login`, { email, password }, { withCredentials: true });
+  axios.post(
+    `${AUTH_URL}/login`,
+    { email, password },
+    { withCredentials: true }
+  );
 
-// //  Register
+// Register (currently commented out)
 // const register = (name, email, password) =>
-//   axios.post(`${BASE_URL}/register`, { name, email, password }, { withCredentials: true });
+//   axios.post(
+//     `${AUTH_URL}/register`,
+//     { name, email, password },
+//     { withCredentials: true }
+//   );
 
-// //  Get current user (if needed for session check)
-//  const getCurrentUser = () =>
-//    axios.get(`${BASE_URL}/me`, { withCredentials: true }); 
-
-//  Update user profile
-const updateProfile = (updatedData) =>
-  axios.put(`${BASE_URL}/profile`, updatedData, { withCredentials: true });
-
-//  Logout
-const logout = () =>
-  axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
-
-const makeUserAdmin = (userId) =>
-  axios.post(`${BASE_URL}/makeadmin/${userId}`, {}, { withCredentials: true });
-
-const makeAdminUser = (userId) =>
-  axios.post(`${BASE_URL}/removeadmin/${userId}`, {}, { withCredentials: true });
-
-const deleteUser = () =>
-  axios.delete(`${BASE_URL}/delete`, { withCredentials: true });
-
+// Get current user
 export const getCurrentUser = async () => {
-  const res = await axios.get("http://localhost:8080/api/auth/me", {
+  const res = await axios.get(`${AUTH_URL}/me`, {
     withCredentials: true,
   });
   return res.data;
 };
 
+// Update user profile
+const updateProfile = (updatedData) =>
+  axios.put(`${AUTH_URL}/profile`, updatedData, {
+    withCredentials: true,
+  });
 
+// Logout
+const logout = () =>
+  axios.post(`${AUTH_URL}/logout`, {}, {
+    withCredentials: true,
+  });
+
+// Make user an admin
+const makeUserAdmin = (userId) =>
+  axios.post(`${AUTH_URL}/makeadmin/${userId}`, {}, {
+    withCredentials: true,
+  });
+
+// Remove admin role
+const makeAdminUser = (userId) =>
+  axios.post(`${AUTH_URL}/removeadmin/${userId}`, {}, {
+    withCredentials: true,
+  });
+
+// Delete user
+const deleteUser = () =>
+  axios.delete(`${AUTH_URL}/delete`, {
+    withCredentials: true,
+  });
+
+// Get user interests
+const getMyInterests = () =>
+  axios.get(`${AUTH_URL}/interests`, {
+    withCredentials: true,
+  });
+
+// Save user interests
+const saveInterests = (categoryIds) =>
+  axios.post(
+    `${AUTH_URL}/interests`,
+    { categoryIds },
+    { withCredentials: true }
+  );
+
+// Get categories
+const getCategories = () =>
+  axios.get(`${BASE_URL}/api/categories`, {
+    withCredentials: true,
+  });
+
+// Forgot password - send OTP
+const forgotPassword = (email) =>
+  axios.post(`${AUTH_URL}/forgot-password`, { email });
+
+// Verify OTP
+const verifyOtp = (email, otp) =>
+  axios.post(`${AUTH_URL}/verify-otp`, { email, otp });
+
+// Reset password
+const resetPassword = (resetToken, newPassword) =>
+  axios.post(`${AUTH_URL}/reset-password`, {
+    resetToken,
+    newPassword,
+  });
 
 const authService = {
   login,
-  //register,
-  //getCurrentUser,
+  // register,
   updateProfile,
   logout,
   makeUserAdmin,
   makeAdminUser,
-  deleteUser
+  deleteUser,
+  getMyInterests,
+  saveInterests,
+  getCategories,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 };
 
 export default authService;
