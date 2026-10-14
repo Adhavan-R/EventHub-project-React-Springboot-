@@ -11,7 +11,9 @@ COPY src src
 RUN chmod +x mvnw && ./mvnw clean package -DskipTests
 
 # Verify the configuration is packaged
-RUN jar tf /app/target/*.jar | grep 'BOOT-INF/classes/application.properties'
+RUN ls -la /app/src/main/resources && \
+    find /app/target -maxdepth 2 -name '*.jar' -print && \
+    jar tf /app/target/eventhub-backend-0.0.1-SNAPSHOT.jar | head -40
 
 FROM eclipse-temurin:21-jre
 
